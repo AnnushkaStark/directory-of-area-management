@@ -30,13 +30,6 @@ class ReadAsync(Generic[ModelType]):
         result = await db.execute(statement)
         return result.scalars().first()
 
-    async def get_multi(
-        self, db: AsyncSession, skip: int = 0, limit: int = 1000, filters=None
-    ) -> Sequence[ModelType]:
-        statement = select(self.model).offset(skip).limit(limit)
-        result = await db.execute(statement)
-        return result.scalars().all()
-
     async def get_multi_by_ids(
         self, db: AsyncSession, *, ids: list[int]
     ) -> Sequence[ModelType]:

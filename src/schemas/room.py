@@ -3,6 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
+from schemas.room_type import RoomTypeResponse
 from schemas.user import UserResponse
 
 
@@ -33,4 +34,5 @@ class RoomResponse(RoomBase):
 
 class RoomFullResponse(RoomBase):
     uid: UUID
+    room_type: RoomTypeResponse
     users: List[UserResponse] = []
