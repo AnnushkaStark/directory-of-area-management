@@ -46,6 +46,6 @@ class Room(Base):
     room_type: Mapped["RoomType"] = relationship(
         "RoomType", back_populates="rooms"
     )
-    users = Mapped[List["User"]] = relationship(
+    users: Mapped[List["User"]] = relationship(
         "User", back_populates="rooms", secondary=RoomUsers.__table__
     )
