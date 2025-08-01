@@ -1,21 +1,31 @@
-from fastapi import APIRouter, Depends, status, Security, Response
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends, Response, Security, status
 from fastapi_jwt import JwtAuthorizationCredentials
-from api.dependencies.database import get_async_db
-from utils.errors import ErrorCodes, errs
-from schemas.user import UserLogin
-from schemas.token import TokenAccessRefresh
-from services import user as user_service
-from utils.security.security import access_security, refresh_security, create_tokens
-from config.configs import jwt_settings
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.dependencies.database import get_async_db
+from config.configs import jwt_settings
+from schemas.token import TokenAccessRefresh
+from schemas.user import UserLogin
+from services import user as user_service
+from utils.errors import ErrorCodes, errs
+from utils.security.security import (
+    access_security,
+    create_tokens,
+    refresh_security,
+)
 
 __all__ = ["router"]
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
-@router.post("/", status_code=status.HTTP_200_OK, responses=errs(e400=[ErrorCodes.INVALID_PASSWORD, ErrorCodes.EMAIL_NOT_FOUND]))
+@router.post(
+    "/",
+    status_code=status.HTTP_200_OK,
+    responses=errs(
+        e400=[ErrorCodes.INVALID_PASSWORD, ErrorCodes.EMAIL_NOT_FOUND]
+    ),
+)
 async def login(
     login_data: UserLogin, db: AsyncSession = Depends(get_async_db)
 ):
@@ -37,4 +47,3 @@ async def logout(
     response.delete_cookie(jwt_settings.ACCESS_TOKEN_COOKIE_KEY)
     response.delete_cookie(jwt_settings.REFRESH_TOKEN_COOKIE_KEY)
     return response
-

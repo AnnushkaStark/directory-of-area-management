@@ -3,9 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from crud.user import user_crud
 from models import User
-from utils.errors import ErrorCodes, DomainError
 from schemas.user import UserCreate, UserLogin
 from services import account as account_service
+from utils.errors import DomainError, ErrorCodes
 from utils.security.password_hasher import get_password_hash, verify_password
 from utils.security.security import TokenSubject, create_tokens
 

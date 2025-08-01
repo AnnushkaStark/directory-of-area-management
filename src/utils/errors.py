@@ -17,10 +17,8 @@ class ErrorCodes(enum.Enum):
     PASSWORDS_DONT_MATCH = "Psswords don`t match"
     INVALID_PASSWORD = "Invalid password"
 
-
     # room_type
     ROOM_TYPE_ALREADY_EXISTS = "Room type already exists"
-
 
 
 class DomainError(Exception):
