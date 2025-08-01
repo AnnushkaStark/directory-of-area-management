@@ -30,5 +30,8 @@ class RoomType(Base):
     )
     name: Mapped[str] = mapped_column(String, unique=True)
     rooms: Mapped[List["Room"]] = relationship(
-        "Room", back_populates="room_type"
+        "Room",
+        back_populates="room_type",
+        cascade="all, delete",
+        passive_deletes=True,
     )
