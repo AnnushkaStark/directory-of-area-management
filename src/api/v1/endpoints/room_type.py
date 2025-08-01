@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.dependencies.auth import get_current_user
 from api.dependencies.database import get_async_db
 from api.dependencies.room_type import get_room_type
 from crud.room_type import room_type_crud
@@ -12,7 +13,11 @@ from utils.errors import ErrorCodes, errs
 
 __all__ = ["router"]
 
-router = APIRouter(prefix="/room_type", tags=["RoomType"])
+router = APIRouter(
+    prefix="/room_type",
+    tags=["RoomType"],
+    dependencies=[Depends(get_current_user)],
+)
 
 
 @router.get("/", response_model=PaginationResponse[RoomTypeResponse])

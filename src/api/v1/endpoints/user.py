@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.dependencies.auth import get_current_user
 from api.dependencies.database import get_async_db
 from api.dependencies.user import get_user
 from crud.user import user_crud
@@ -14,7 +15,9 @@ from utils.errors import ErrorCodes, errs
 
 __all__ = ["router"]
 
-router = APIRouter(prefix="/user", tags=["User"])
+router = APIRouter(
+    prefix="/user", tags=["User"], dependencies=[Depends(get_current_user)]
+)
 
 
 @router.get("/", response_model=PaginationResponse[UserResponse])

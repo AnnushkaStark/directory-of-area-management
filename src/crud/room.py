@@ -24,7 +24,7 @@ class RoomCRUD(BaseAsyncCRUD[Room, RoomCreate, BaseModel]):
         result = await db.execute(statement)
         return result.scalars().unique().first()
 
-    async def read_multi(
+    async def get_multi(
         self, db: AsyncSession, offset: int = 0, limit: int = 20
     ) -> PaginationResponse[RoomResponse]:
         statement = (
