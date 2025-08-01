@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from crud.user import user_crud
 from models import User
+from utils.errors import ErrorCodes, DomainError
 from schemas.user import UserCreate, UserLogin
 from services import account as account_service
 from utils.security.password_hasher import get_password_hash, verify_password
@@ -11,9 +12,9 @@ from utils.security.security import TokenSubject, create_tokens
 
 async def create(db: AsyncSession, create_data: UserCreate) -> User:
     if await user_crud.get_by_email(db=db, email=create_data.email):
-        raise Exception("Email alredy exsists")
+        raise DomainError(ErrorCodes.EMAIL_ALREADY_REGISTERED)
     if create_data.password != create_data.password_confirm:
-        raise Exception("Passwords don`t match")
+        raise DomainError(ErrorCodes.PASSWORDS_DONT_MATCH)
     create_data.password = await get_password_hash(
         password=create_data.password
     )
@@ -28,7 +29,7 @@ async def create(db: AsyncSession, create_data: UserCreate) -> User:
 async def login(db: AsyncSession, login_data: UserLogin) -> dict:
     found_user = await user_crud.get_by_email(db=db, email=login_data.email)
     if not found_user:
-        raise Exception("Email not found")
+        raise DomainError(ErrorCodes.EMAIL_NOT_FOUND)
     try:
         await verify_password(
             plain_password=login_data.password,

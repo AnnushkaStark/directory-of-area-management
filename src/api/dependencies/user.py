@@ -1,7 +1,7 @@
 import uuid
 from typing import Literal
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.dependencies.auth import get_current_user
@@ -17,4 +17,8 @@ async def get_user(
 ) -> User:
     if user_uid == "me":
         return await user_crud.get_by_uid(db=db, uid=user.uid)
-    return await user_crud.get_by_uid(db=db, uid=user_uid)
+    else:
+        if found_user := await user_crud.get_by_uid(db=db, uid=user_uid):
+            return found_user
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    

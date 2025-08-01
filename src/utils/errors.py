@@ -11,10 +11,16 @@ class Error(BaseModel):
 
 
 class ErrorCodes(enum.Enum):
+    # auth
     EMAIL_NOT_FOUND = "Email not found"
     EMAIL_ALREADY_REGISTERED = "Email alredy registered"
-    ROOM_TYPE_ALREADY_EXISTS = "Room type already exists"
     PASSWORDS_DONT_MATCH = "Psswords don`t match"
+    INVALID_PASSWORD = "Invalid password"
+
+
+    # room_type
+    ROOM_TYPE_ALREADY_EXISTS = "Room type already exists"
+
 
 
 class DomainError(Exception):
@@ -31,6 +37,7 @@ async def domain_error_exception_handler(request: Request, exc: DomainError):
         ErrorCodes.EMAIL_ALREADY_REGISTERED: 409,
         ErrorCodes.EMAIL_NOT_FOUND: 404,
         ErrorCodes.PASSWORDS_DONT_MATCH: 400,
+        ErrorCodes.INVALID_PASSWORD: 400,
     }
 
     status_code = ERROR_STATUS_MAP.get(exc.code, 500)
