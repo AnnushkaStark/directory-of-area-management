@@ -15,15 +15,14 @@ from utils.errors import ErrorCodes, errs
 
 __all__ = ["router"]
 
-router = APIRouter(
-    prefix="/user", tags=["User"], dependencies=[Depends(get_current_user)]
-)
+router = APIRouter(prefix="/user", tags=["User"])
 
 
 @router.get("/", response_model=PaginationResponse[UserResponse])
 async def read_users(
     offset: int = 0,
     limit: int = 0,
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_db),
 ):
     return await user_crud.get_multi(db=db, offset=offset, limit=limit)
