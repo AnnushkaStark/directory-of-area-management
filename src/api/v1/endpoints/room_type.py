@@ -33,9 +33,9 @@ async def read_room_type(room_type: RoomType = Depends(get_room_type)):
     status_code=status.HTTP_201_CREATED,
 )
 async def room_type_create(
-    room_type: RoomTypeBase, db: AsyncSession = Depends(get_async_db)
+    schema: RoomTypeBase, db: AsyncSession = Depends(get_async_db)
 ):
-    return await room_type_service.create(db=db, create_data=room_type)
+    return await room_type_service.manage_obj(db=db, schema=schema)
 
 
 @router.put(
@@ -44,12 +44,12 @@ async def room_type_create(
     status_code=status.HTTP_200_OK,
 )
 async def room_type_update(
-    update_data: RoomTypeBase,
+    schema: RoomTypeBase,
     room_type: RoomType = Depends(get_room_type),
     db: AsyncSession = Depends(get_async_db),
 ):
-    return await room_type_service.update(
-        db=db, db_obj=room_type, update_data=update_data
+    return await room_type_service.manage_obj(
+        db=db, db_obj=room_type, schema=schema
     )
 
 

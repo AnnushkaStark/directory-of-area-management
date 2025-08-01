@@ -24,6 +24,7 @@ app.add_middleware(
 app.include_router(routes.room_type.router)
 app.include_router(routes.auth.router)
 app.include_router(routes.user.router)
+app.include_router(routes.room.router)
 
 if __name__ == "__main__":
     uvicorn.run(

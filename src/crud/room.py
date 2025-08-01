@@ -2,17 +2,18 @@ from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
-from sqlalchemy import insert, select, update
+from sqlalchemy import func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
 from models import Room
-from schemas.room import RoomCreate, RoomUpdate
+from schemas.pagination import PaginationResponse
+from schemas.room import RoomCreate, RoomResponse
 
 from .async_crud import BaseAsyncCRUD
 
 
-class RoomCRUD(BaseAsyncCRUD[Room, RoomCreate, RoomUpdate]):
+class RoomCRUD(BaseAsyncCRUD[Room, RoomCreate, BaseModel]):
     async def get_by_uid(self, db: AsyncSession, uid: UUID) -> Optional[Room]:
         statement = select(self.model).options(
             joinedload(
@@ -22,6 +23,23 @@ class RoomCRUD(BaseAsyncCRUD[Room, RoomCreate, RoomUpdate]):
         )
         result = await db.execute(statement)
         return result.scalars().unique().first()
+
+    async def read_multi(
+        self, db: AsyncSession, offset: int = 0, limit: int = 20
+    ) -> PaginationResponse[RoomResponse]:
+        statement = (
+            select(self.model, func.count().over().label("total"))
+            .offset(offset)
+            .limit(limit)
+        )
+        result = await db.execute(statement)
+        rows = result.mappings().all()
+        return PaginationResponse.create(
+            limit=limit,
+            offset=offset,
+            count=rows[0]["total"] if rows else 0,
+            items=[r["Room"] for r in rows],
+        )
 
     async def create(
         self, db: AsyncSession, create_schema: RoomCreate, commit: bool = True
