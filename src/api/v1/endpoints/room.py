@@ -50,7 +50,7 @@ async def cretate_room(
 
 
 @router.put(
-    "/{room_uid}/", responses=errs(_room_errs), status_code=status.HTTP_200_OK
+    "/{room_uid}/", responses=_room_errs, status_code=status.HTTP_200_OK
 )
 async def update_room(
     schema: RoomCreate,
