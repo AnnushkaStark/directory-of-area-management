@@ -19,6 +19,11 @@ class ErrorCodes(enum.Enum):
 
     # room_type
     ROOM_TYPE_ALREADY_EXISTS = "Room type already exists"
+    ROOM_TYPE_NOT_FOUND = "Room type not found"
+
+    # room
+    USER_ID_MUST_BE_UNIQUE_FOR_ROOM = "User id must be unique for room"
+    NOT_ALL_USERS_WAS_FOUND = "Not all users was found"
 
 
 class DomainError(Exception):
@@ -36,6 +41,9 @@ async def domain_error_exception_handler(request: Request, exc: DomainError):
         ErrorCodes.EMAIL_NOT_FOUND: 404,
         ErrorCodes.PASSWORDS_DONT_MATCH: 400,
         ErrorCodes.INVALID_PASSWORD: 400,
+        ErrorCodes.ROOM_TYPE_NOT_FOUND: 400,
+        ErrorCodes.USER_ID_MUST_BE_UNIQUE_FOR_ROOM: 400,
+        ErrorCodes.NOT_ALL_USERS_WAS_FOUND: 400,
     }
 
     status_code = ERROR_STATUS_MAP.get(exc.code, 500)
