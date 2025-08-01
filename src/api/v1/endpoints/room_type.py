@@ -45,7 +45,7 @@ async def room_type_create(
 
 @router.put(
     "/{room_type_uid}/",
-    responses=errs(ErrorCodes.ROOM_TYPE_ALREADY_EXISTS),
+    responses=errs(e400=ErrorCodes.ROOM_TYPE_ALREADY_EXISTS),
     status_code=status.HTTP_200_OK,
 )
 async def room_type_update(
