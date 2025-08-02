@@ -22,7 +22,6 @@ class ErrorCodes(enum.Enum):
     ROOM_TYPE_NOT_FOUND = "Room type not found"
 
     # room
-    USER_ID_MUST_BE_UNIQUE_FOR_ROOM = "User id must be unique for room"
     NOT_ALL_USERS_WAS_FOUND = "Not all users was found"
 
 
@@ -42,7 +41,6 @@ async def domain_error_exception_handler(request: Request, exc: DomainError):
         ErrorCodes.PASSWORDS_DONT_MATCH: 400,
         ErrorCodes.INVALID_PASSWORD: 400,
         ErrorCodes.ROOM_TYPE_NOT_FOUND: 400,
-        ErrorCodes.USER_ID_MUST_BE_UNIQUE_FOR_ROOM: 400,
         ErrorCodes.NOT_ALL_USERS_WAS_FOUND: 400,
     }
 

@@ -21,7 +21,7 @@ router = APIRouter(prefix="/user", tags=["User"])
 @router.get("/", response_model=PaginationResponse[UserResponse])
 async def read_users(
     offset: int = 0,
-    limit: int = 0,
+    limit: int = 20,
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_db),
 ):

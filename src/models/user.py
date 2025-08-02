@@ -35,7 +35,12 @@ class User(Base):
     )
     email: Mapped[str] = mapped_column(String, unique=True)
     password: Mapped[str]
-    account: Mapped["Account"] = relationship("Account", back_populates="user")
+    account: Mapped["Account"] = relationship(
+        "Account",
+        back_populates="user",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
     rooms: Mapped[List["Room"]] = relationship(
         "Room", back_populates="users", secondary=RoomUsers.__table__
     )

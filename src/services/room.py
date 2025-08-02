@@ -17,28 +17,29 @@ async def _check_type(db: AsyncSession, schema: RoomCreate) -> RoomCreate:
 
 
 async def _get_users(db: AsyncSession, schema: RoomCreate) -> RoomCreate:
-    try:
-        schema = await _check_type(db=db, schema=schema)
-    except DomainError:
-        raise DomainError(ErrorCodes.ROOM_TYPE_NOT_FOUND)
-    if len(schema.users_ids) > len(set(schema.users_ids)):
-        raise DomainError(ErrorCodes.USER_ID_MUST_BE_UNIQUE_FOR_ROOM)
-    users = []
-    for user_id in schema.users_ids:
-        if user := await user_crud.get_by_id(db=db, obj_id=user_id):
-            users.append(user)
-    if len(users) < len(schema.users_ids):
-        raise DomainError(ErrorCodes.NOT_ALL_USERS_WAS_FOUND)
-    return users
+    if len(schema.users_ids):
+        schema.users_ids = list(set(schema.users_ids))
+        users = []
+        for user_id in schema.users_ids:
+            if user := await user_crud.get_by_id(db=db, obj_id=user_id):
+                users.append(user)
+        if len(users) < len(schema.users_ids):
+            raise DomainError(ErrorCodes.NOT_ALL_USERS_WAS_FOUND)
+        return users
+    return []
 
 
 async def manage_obj(
     db: AsyncSession, schema: RoomCreate, db_obj: Optional[Room] = None
 ) -> Optional[Room]:
     try:
+        schema = await _check_type(db=db, schema=schema)
+    except DomainError:
+        raise DomainError(ErrorCodes.ROOM_TYPE_NOT_FOUND)
+    try:
         users = await _get_users(db=db, schema=schema)
-    except DomainError as err:
-        raise DomainError(err.value)
+    except DomainError:
+        raise DomainError(ErrorCodes.NOT_ALL_USERS_WAS_FOUND)
     del schema.users_ids
     if db_obj:
         room = await room_crud.update(

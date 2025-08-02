@@ -36,7 +36,6 @@ async def read_room(room: Room = Depends(get_room)):
         _room_errs := errs(
             e400=[
                 ErrorCodes.ROOM_TYPE_NOT_FOUND,
-                ErrorCodes.USER_ID_MUST_BE_UNIQUE_FOR_ROOM,
                 ErrorCodes.NOT_ALL_USERS_WAS_FOUND,
             ]
         )

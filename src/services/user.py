@@ -1,4 +1,4 @@
-from argon2.exceptions import Argon2Error
+from argon2.exceptions import VerifyMismatchError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from crud.user import user_crud
@@ -15,9 +15,7 @@ async def create(db: AsyncSession, create_data: UserCreate) -> User:
         raise DomainError(ErrorCodes.EMAIL_ALREADY_REGISTERED)
     if create_data.password != create_data.password_confirm:
         raise DomainError(ErrorCodes.PASSWORDS_DONT_MATCH)
-    create_data.password = await get_password_hash(
-        password=create_data.password
-    )
+    create_data.password = get_password_hash(password=create_data.password)
     del create_data.password_confirm
     user = await user_crud.create(db=db, create_schema=create_data)
     await account_service.create(
@@ -31,12 +29,12 @@ async def login(db: AsyncSession, login_data: UserLogin) -> dict:
     if not found_user:
         raise DomainError(ErrorCodes.EMAIL_NOT_FOUND)
     try:
-        await verify_password(
+        verify_password(
             plain_password=login_data.password,
             hashed_password=found_user.password,
         )
-    except Argon2Error:
-        raise Exception("Invalid password")
+    except VerifyMismatchError:
+        raise DomainError(ErrorCodes.INVALID_PASSWORD)
 
     subject = TokenSubject(
         uid=str(found_user.uid),

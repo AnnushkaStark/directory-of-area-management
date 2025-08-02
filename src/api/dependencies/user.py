@@ -13,7 +13,6 @@ from models import User
 async def user_uid(
     user_uid: uuid.UUID | Literal["me"],
     user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_async_db),
 ) -> uuid.UUID:
     if user_uid == "me":
         return user.uid
